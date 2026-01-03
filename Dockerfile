@@ -1,24 +1,22 @@
-# Usa a imagem oficial do Playwright (já vem com navegadores e dependências)
+# Usa a imagem base
 FROM mcr.microsoft.com/playwright:v1.41.0-focal
 
-# Instala o Xvfb (Monitor Virtual) para rodar headless: false
+# Instala o Xvfb (Monitor Virtual)
 RUN apt-get update && apt-get install -y xvfb
 
-# Define a pasta de trabalho
 WORKDIR /app
 
-# Copia os arquivos de dependências
 COPY package*.json ./
 
-# Instala as dependências do projeto
+# Instala dependências do Node
 RUN npm install
 
-# Copia o restante dos arquivos (seus scripts)
+# 🔥 LINHA NOVA OBRIGATÓRIA: Garante que o navegador certo seja baixado
+RUN npx playwright install chromium
+
 COPY . .
 
-# Expõe a porta que você usa no server.js
 EXPOSE 3000
 
-# O COMANDO MÁGICO:
-# Inicia o servidor com o monitor virtual ligado
+# Inicia com o monitor virtual
 CMD ["xvfb-run", "--server-args=-screen 0 1280x720x24", "node", "server.js"]
