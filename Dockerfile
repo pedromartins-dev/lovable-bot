@@ -17,5 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Inicia o servidor com o monitor virtual
-CMD ["tail", "-f", "/dev/null"]
-
+CMD ["xvfb-run", "--server-args=-screen 0 1280x720x24", "node", "server.js"]
