@@ -1,22 +1,20 @@
-# Usa a imagem base
+# Usa a imagem oficial do Playwright
 FROM mcr.microsoft.com/playwright:v1.41.0-focal
 
-# Instala o Xvfb (Monitor Virtual)
+# Instala o monitor virtual (Xvfb)
 RUN apt-get update && apt-get install -y xvfb
 
 WORKDIR /app
 
 COPY package*.json ./
 
-# Instala dependências do Node
-RUN npm install
-
-# 🔥 LINHA NOVA OBRIGATÓRIA: Garante que o navegador certo seja baixado
-RUN npx playwright install chromium
+# Instala as dependências do Node e força a instalação do navegador Chromium
+RUN npm install && npx playwright install chromium
 
 COPY . .
 
+# Expõe a porta 3000
 EXPOSE 3000
 
-# Inicia com o monitor virtual
+# Inicia o servidor com o monitor virtual
 CMD ["xvfb-run", "--server-args=-screen 0 1280x720x24", "node", "server.js"]
